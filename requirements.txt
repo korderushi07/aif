@@ -18,7 +18,12 @@ langchain-chroma
 
 # File ingestion
 PyPDF2
-python-docx1
+python-docx
+
+# OCR / PDF with image extraction
+PyMuPDF
+pytesseract
+Pillow
 
 # Embeddings / crypto
 cryptography

@@ -8,7 +8,7 @@ from django.core.files.storage import default_storage
 from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 from .models import KnowledgeFile
-from .rag_api import load_file_to_docs
+from .rag_api import load_file_to_docs, add_documents_batched
 from .embedding_backends import get_embeddings_for_backend
 from .rag_store import (
     user_chroma_dir,
@@ -68,7 +68,7 @@ def _reindex_backend(request, backend: str):
             d.metadata["kb_backend"] = backend
 
         chunks = splitter.split_documents(docs)
-        vs.add_documents(chunks)
+        add_documents_batched(vs, chunks)
         total_chunks += len(chunks)
 
     return {"backend": backend, "files": qs.count(), "chunks": total_chunks}
