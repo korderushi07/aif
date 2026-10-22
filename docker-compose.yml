@@ -1,0 +1,22 @@
+services:
+  web:
+    build: .
+    container_name: ragchatbot_web
+    ports:
+      - "8000:8000"
+    env_file:
+      - .env
+    environment:
+      DEBUG: "1"
+      DJANGO_ALLOWED_HOSTS: "localhost,127.0.0.1"
+      DJANGO_SECRET_KEY: "dev-secret-change-me"
+      RAGCHATBOT_FERNET_KEY: "${RAGCHATBOT_FERNET_KEY:-}"
+    volumes:
+      - ragchatbot_db:/app/source/djangoserver/dbdata
+      - ragchatbot_media:/app/source/djangoserver/media
+      - ragchatbot_chroma:/app/source/djangoserver/chroma
+
+volumes:
+  ragchatbot_db:
+  ragchatbot_media:
+  ragchatbot_chroma:
