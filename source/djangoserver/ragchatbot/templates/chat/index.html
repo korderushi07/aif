@@ -1,286 +1,455 @@
-{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>AIF Chat · Intelligent Document Intelligence</title>
-    <link rel="stylesheet" href="{% static 'chat/chat.css' %}">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>AIF · Document Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600&family=Newsreader:opsz,wght@6..72,500;6..72,600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#f3f5f8;--panel:#fff;--rail:#fafbfc;--ink:#0f1623;--ink2:#4b5565;--mute:#8590a2;--line:#e3e7ee;--accent:#2d4de0;--accent2:#1d36b8;--on:#fff;--soft:#eaeefd;--ok:#14935f;--bad:#c93636;--ui:"Geist",system-ui,-apple-system,"Segoe UI",sans-serif;--serif:"Newsreader",Georgia,serif;--mono:"Geist Mono",ui-monospace,Menlo,monospace;--sh:0 1px 2px rgba(15,22,35,.05),0 10px 28px -12px rgba(15,22,35,.16);--ease:cubic-bezier(.2,.8,.2,1)}
+@media(prefers-color-scheme:dark){:root{--bg:#0a0e16;--panel:#121826;--rail:#0e131e;--ink:#eaeef6;--ink2:#aab3c3;--mute:#6f7b8f;--line:#1f2838;--accent:#7b92ff;--accent2:#9fb0ff;--on:#0a0e16;--soft:rgba(123,146,255,.14);--sh:0 10px 30px -12px rgba(0,0,0,.7)}}
+*{box-sizing:border-box}[hidden]{display:none!important}
+html,body{height:100%;margin:0}
+body{font:14.5px/1.55 var(--ui);color:var(--ink);background:var(--bg);-webkit-font-smoothing:antialiased;overflow:hidden}
+button,input,textarea{font:inherit;color:inherit}button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+*{scrollbar-width:thin;scrollbar-color:var(--line) transparent}
+svg.i{width:18px;height:18px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+
+.app{display:grid;grid-template-columns:288px minmax(0,1fr);height:100dvh}
+
+/* Rail */
+.rail{background:var(--rail);border-right:1px solid var(--line);display:flex;flex-direction:column;min-height:0}
+.brand{display:flex;align-items:center;gap:10px;padding:18px 18px 12px;font-family:var(--serif);font-weight:600;font-size:22px;letter-spacing:-.01em}
+.mark{width:30px;height:30px;border-radius:9px;display:grid;place-items:center;color:var(--on);background:linear-gradient(145deg,var(--accent),var(--accent2))}
+.mark svg{width:16px;height:16px}
+.newchat{margin:4px 14px 10px;display:flex;align-items:center;gap:10px;height:42px;padding:0 14px;border:1px solid var(--line);border-radius:12px;background:var(--panel);font-weight:500;box-shadow:var(--sh);transition:border-color .15s}
+.newchat:hover{border-color:var(--accent)}.newchat svg{color:var(--accent)}
+.cap{padding:10px 20px 6px;font-size:12px;color:var(--mute);font-weight:500}
+.chats{flex:1;overflow:auto;padding:0 10px 10px}
+.chat{display:flex;align-items:center;border-radius:10px;position:relative}
+.chat:hover{background:color-mix(in srgb,var(--ink) 5%,transparent)}
+.chat.on{background:var(--soft)}
+.chat .ct{flex:1;min-width:0;text-align:left;background:none;border:0;padding:9px 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border-radius:10px}
+.chat.on .ct{color:var(--accent2);font-weight:500}
+.acts{display:none;gap:2px;padding-right:6px}
+.chat:hover .acts,.chat:focus-within .acts{display:flex}
+.acts button{width:26px;height:26px;display:grid;place-items:center;border:0;background:none;border-radius:7px;color:var(--mute)}
+.acts button:hover{background:var(--line);color:var(--ink)}.acts button.del:hover{color:var(--bad)}
+.acts svg{width:14px;height:14px}
+.none{padding:8px 12px;color:var(--mute);font-size:13px}
+.foot{padding:10px;border-top:1px solid var(--line);display:grid;gap:2px}
+.nav{display:flex;align-items:center;gap:11px;height:40px;padding:0 12px;border:0;border-radius:10px;background:none;color:var(--ink2);text-align:left;width:100%}
+.nav:hover{background:color-mix(in srgb,var(--ink) 5%,transparent);color:var(--ink)}
+.badge{margin-left:auto;font:500 11.5px var(--mono);padding:1px 8px;border-radius:99px;background:var(--soft);color:var(--accent2)}
+
+/* Main */
+main{display:flex;flex-direction:column;min-width:0;min-height:0;background:radial-gradient(800px 320px at 50% -140px,color-mix(in srgb,var(--accent) 10%,transparent),transparent 70%),var(--bg)}
+.bar{height:56px;flex:none;display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1px solid var(--line);background:color-mix(in srgb,var(--panel) 75%,transparent);backdrop-filter:blur(12px)}
+.burger{display:none;width:36px;height:36px;place-items:center;border:1px solid var(--line);border-radius:10px;background:var(--panel)}
+#title{font-family:var(--serif);font-weight:600;font-size:19px;letter-spacing:-.01em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.pill{display:inline-flex;align-items:center;gap:8px;height:28px;padding:0 12px;border:1px solid var(--line);border-radius:99px;background:var(--panel);font:12px var(--mono);color:var(--ink2);white-space:nowrap}
+.pill i{width:7px;height:7px;border-radius:50%;background:var(--mute)}.pill.ok i{background:var(--ok)}
+
+.feed{flex:1;overflow:auto;padding:30px 20px 10px;scroll-behavior:smooth}
+.col{max-width:760px;margin:0 auto}
+
+.empty{padding:6vh 0 20px;animation:rise .6s var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(12px)}}
+.empty h1{font-family:var(--serif);font-weight:600;font-size:clamp(34px,5.4vw,54px);line-height:1.04;letter-spacing:-.03em;margin:0 0 14px}
+.empty p{margin:0;color:var(--ink2);font-size:16.5px;max-width:46ch}
+.sug{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:32px}
+.sug button{text-align:left;padding:16px;min-height:104px;display:flex;flex-direction:column;justify-content:space-between;gap:16px;border:1px solid var(--line);border-radius:16px;background:var(--panel);box-shadow:var(--sh);font-weight:500;line-height:1.4;transition:transform .2s var(--ease),border-color .2s}
+.sug button:hover{transform:translateY(-2px);border-color:var(--accent)}
+.sug svg{color:var(--accent)}
+.hint{margin-top:18px;display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px dashed var(--line);border-radius:14px;color:var(--ink2);font-size:13.5px}
+.hint button{margin-left:auto;border:0;border-radius:9px;padding:7px 12px;background:var(--accent);color:var(--on);font-weight:500}
+
+.msg{display:flex;gap:12px;margin:0 0 26px}
+.msg.u{justify-content:flex-end}
+.msg.u .b{max-width:82%;background:var(--accent);color:var(--on);padding:10px 16px;border-radius:18px 18px 5px 18px;white-space:pre-wrap;overflow-wrap:anywhere}
+.av{width:30px;height:30px;flex:none;border-radius:10px;display:grid;place-items:center;background:var(--soft);color:var(--accent2);margin-top:1px}
+.av svg{width:16px;height:16px}
+.bw{flex:1;min-width:0}
+.md{overflow-wrap:anywhere}
+.md>:first-child{margin-top:0}.md>:last-child{margin-bottom:0}
+.md p{margin:0 0 .8em}.md ul,.md ol{padding-left:1.3em;margin:.4em 0 .9em}.md li{margin:.25em 0}
+.md h1,.md h2,.md h3{font-family:var(--serif);line-height:1.2;letter-spacing:-.01em;margin:1.2em 0 .4em}
+.md a{color:var(--accent2);text-underline-offset:3px}
+.md code{font:.88em var(--mono);padding:2px 6px;border-radius:6px;background:var(--soft)}
+.md pre{margin:.9em 0;padding:14px 16px;overflow:auto;border-radius:12px;background:#0d1320;color:#dce6f5}
+.md pre code{background:none;padding:0;color:inherit}
+.md blockquote{margin:.9em 0;padding:2px 14px;border-left:3px solid var(--accent);color:var(--ink2)}
+.md table{border-collapse:collapse;display:block;overflow:auto;margin:.9em 0;font-size:13.5px}
+.md th,.md td{border:1px solid var(--line);padding:7px 12px;text-align:left}.md th{background:var(--soft)}
+.src{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}.src:empty{display:none}
+.chip{display:inline-flex;align-items:center;gap:7px;font-size:12px;padding:4px 9px;border:1px solid var(--line);border-radius:9px;background:var(--panel);color:var(--ink2)}
+.chip svg{width:13px;height:13px;color:var(--mute)}
+.chip b{font:500 11px var(--mono);padding:0 6px;border-radius:5px;background:var(--soft);color:var(--accent2)}
+.note{font-size:12px;color:var(--mute);margin-top:8px}
+.err{padding:12px 14px;border:1px solid color-mix(in srgb,var(--bad) 40%,transparent);background:color-mix(in srgb,var(--bad) 10%,transparent);border-radius:12px;color:var(--bad)}
+.dots{display:inline-flex;gap:5px;padding:8px 0}
+.dots i{width:7px;height:7px;border-radius:50%;background:var(--mute);animation:bob 1.2s infinite}
+.dots i:nth-child(2){animation-delay:.15s}.dots i:nth-child(3){animation-delay:.3s}
+@keyframes bob{0%,60%,100%{transform:none;opacity:.4}30%{transform:translateY(-5px);opacity:1}}
+
+.composer{padding:6px 20px calc(14px + env(safe-area-inset-bottom));background:linear-gradient(to top,var(--bg) 60%,transparent)}
+.box{max-width:760px;margin:0 auto;display:flex;align-items:flex-end;gap:8px;padding:8px 8px 8px 18px;border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:var(--sh);transition:border-color .15s,box-shadow .15s}
+.box:focus-within{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 20%,transparent),var(--sh)}
+textarea{flex:1;min-width:0;resize:none;border:0;outline:0;background:none;padding:9px 0;max-height:200px;line-height:1.5;font-size:15px}
+textarea::placeholder{color:var(--mute)}
+.send{width:40px;height:40px;flex:none;display:grid;place-items:center;border:0;border-radius:50%;background:var(--accent);color:var(--on);transition:transform .1s,opacity .15s}
+.send:active{transform:scale(.94)}.send:disabled{opacity:.35;cursor:not-allowed}
+.send.stop{background:var(--ink);color:var(--panel)}
+.tip{max-width:760px;margin:8px auto 0;text-align:center;font-size:12px;color:var(--mute)}
+kbd{font:11px var(--mono);padding:1px 6px;border:1px solid var(--line);border-bottom-width:2px;border-radius:6px;background:var(--panel)}
+
+/* Dialogs */
+dialog{width:min(540px,calc(100% - 28px));max-height:calc(100dvh - 40px);padding:0;border:1px solid var(--line);border-radius:22px;background:var(--panel);color:var(--ink);box-shadow:0 40px 90px -30px rgba(0,0,0,.55);animation:pop .2s var(--ease)}
+dialog::backdrop{background:rgba(8,12,20,.55);backdrop-filter:blur(5px)}
+@keyframes pop{from{opacity:0;transform:translateY(10px) scale(.98)}}
+.dh{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--line)}
+.dh h2{margin:0;font-family:var(--serif);font-size:21px;font-weight:600;letter-spacing:-.01em}
+.x{width:32px;height:32px;display:grid;place-items:center;border:0;border-radius:9px;background:none;color:var(--mute)}.x:hover{background:var(--soft);color:var(--ink)}
+.db{padding:22px;display:grid;gap:18px}
+.f{display:grid;gap:7px}.f label,.lab{font-weight:500;font-size:13px;display:flex;justify-content:space-between;align-items:center}
+.f input[type=text],.f input[type=password],.f select{height:44px;padding:0 13px;border:1px solid var(--line);border-radius:12px;background:var(--bg);outline:0;width:100%}
+.f input:focus,.f select:focus{border-color:var(--accent);box-shadow:0 0 0 4px color-mix(in srgb,var(--accent) 18%,transparent)}
+.f input[type=range]{accent-color:var(--accent);width:100%}
+.help{font-size:12px;color:var(--mute)}
+.row{display:flex;align-items:center;gap:12px}
+.btn{height:42px;padding:0 18px;border:0;border-radius:12px;background:var(--accent);color:var(--on);font-weight:500}
+.btn:hover{filter:brightness(1.08)}.btn:disabled{opacity:.5}
+.btn.ghost{background:var(--bg);color:var(--ink2);border:1px solid var(--line)}
+.btn.warn{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad)}
+.link{border:0;background:none;color:var(--accent2);font-size:12.5px;padding:0}
+.msgline{font-size:13px;color:var(--mute)}.msgline.bad{color:var(--bad)}.msgline.good{color:var(--ok)}
+.drop{display:grid;justify-items:center;gap:6px;text-align:center;padding:30px 18px;border:1.5px dashed var(--line);border-radius:18px;background:var(--bg);cursor:pointer;transition:.18s}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--soft)}
+.drop svg{width:26px;height:26px;color:var(--accent)}.drop b{font-weight:600}.drop span{font-size:12.5px;color:var(--mute)}
+.files{display:grid;gap:8px;max-height:300px;overflow:auto}
+.file{display:flex;align-items:center;gap:12px;padding:10px 12px;border:1px solid var(--line);border-radius:12px;background:var(--bg)}
+.file .n{flex:1;min-width:0}.file .n b{display:block;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.file .n span{font-size:12px;color:var(--mute)}
+.file button{width:30px;height:30px;display:grid;place-items:center;border:0;border-radius:8px;background:none;color:var(--mute)}.file button:hover{background:color-mix(in srgb,var(--bad) 12%,transparent);color:var(--bad)}
+
+.scrim{display:none}
+@media(max-width:880px){.sug{grid-template-columns:1fr}.sug button{min-height:0;flex-direction:row;align-items:center}}
+@media(max-width:820px){
+ .app{grid-template-columns:minmax(0,1fr)}
+ .rail{position:fixed;inset:0 auto 0 0;width:min(86vw,310px);z-index:40;transform:translateX(-102%);transition:transform .3s var(--ease);box-shadow:0 30px 80px rgba(0,0,0,.4)}
+ .rail.open{transform:none}
+ .scrim.show{display:block;position:fixed;inset:0;z-index:39;background:rgba(8,12,20,.5)}
+ .burger{display:grid}.acts{display:flex}.tip{display:none}.bar{padding:0 14px}.feed{padding:22px 14px 6px}.composer{padding-inline:12px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
+</style>
 </head>
 <body>
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+<div hidden>{% csrf_token %}</div>
 
-    <div class="app">
-        <!-- Sidebar -->
-        <aside class="sidebar" id="sidebar">
-            <div class="sidebar-header">
-                <div class="brand-row">
-                    <div class="brand">
-                        <div class="brand-icon-box">
-                            <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                                <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-                            </svg>
-                        </div>
-                        <span>AIF RAG</span>
-                    </div>
-                    <span class="brand-badge">OCR Ready</span>
-                </div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+<symbol id="i-lib" viewBox="0 0 24 24"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></symbol>
+<symbol id="i-gear" viewBox="0 0 24 24"><path d="M4 6h10M18 6h2M4 12h2M10 12h10M4 18h12M20 18h0"/><circle cx="16" cy="6" r="2"/><circle cx="8" cy="12" r="2"/><circle cx="18" cy="18" r="2"/></symbol>
+<symbol id="i-menu" viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24"><path d="M12 19V5M5 12l7-7 7 7"/></symbol>
+<symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="2" fill="currentColor"/></symbol>
+<symbol id="i-trash" viewBox="0 0 24 24"><path d="M3 6h18M8 6V4h8v2M6 6l1 14h10l1-14"/></symbol>
+<symbol id="i-pen" viewBox="0 0 24 24"><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h5"/></symbol>
+<symbol id="i-up" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M5.6 5.6l2.8 2.8M15.6 15.6l2.8 2.8M18.4 5.6l-2.8 2.8M8.4 15.6l-2.8 2.8"/></symbol>
+<symbol id="i-find" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></symbol>
+<symbol id="i-q" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.5a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .9-1 1.7M12 17h.01"/></symbol>
+</defs></svg>
 
-                <div class="sidebar-actions-bar">
-                    <button class="primary-new-chat" id="newChatBtn" type="button" title="Start new conversation">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <line x1="12" y1="5" x2="12" y2="19"></line>
-                            <line x1="5" y1="12" x2="19" y2="12"></line>
-                        </svg>
-                        <span>New Chat</span>
-                    </button>
-                    <button class="icon-btn-round" id="uploadBtn" type="button" data-tooltip="Upload Document" title="Upload">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                            <polyline points="17 8 12 3 7 8"></polyline>
-                            <line x1="12" y1="3" x2="12" y2="15"></line>
-                        </svg>
-                    </button>
-                    <button class="icon-btn-round" id="knowledgeBtn" type="button" data-tooltip="Knowledge Base" title="Knowledge Base">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                            <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                        </svg>
-                    </button>
-                    <button class="icon-btn-round" id="settingsBtn" type="button" data-tooltip="Settings" title="Settings">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="3"></circle>
-                            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                        </svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="sidebar-section-title">Conversations</div>
-
-            <div class="chat-list" id="chatList">
-                <div class="chat-item active">
-                    <div class="chat-item-row">
-                        <div style="min-width:0; flex:1;">
-                            <div class="chat-title" id="activeChatTitle">New conversation</div>
-                            <div class="chat-meta">Just now</div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="sidebar-footer">
-                <div class="user-profile">
-                    <div class="user-avatar">AI</div>
-                    <div class="user-info">
-                        <div class="user-name">Workspace</div>
-                        <div class="user-status">
-                            <span class="status-dot"></span>
-                            <span>Direct Access Active</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </aside>
-
-        <!-- Main chat area -->
-        <main class="main">
-            <header class="topbar">
-                <div class="topbar-left">
-                    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" type="button" aria-label="Toggle sidebar">
-                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <line x1="3" y1="12" x2="21" y2="12"></line>
-                            <line x1="3" y1="6" x2="21" y2="6"></line>
-                            <line x1="3" y1="18" x2="21" y2="18"></line>
-                        </svg>
-                    </button>
-                    <div class="topbar-title" id="topbarTitle">New conversation</div>
-                </div>
-
-                <div class="topbar-right">
-                    <div class="status-badge">
-                        <span class="status-dot"></span>
-                        <span>Vector Store Active</span>
-                    </div>
-                </div>
-            </header>
-
-            <section class="messages" id="messages">
-                <div class="welcome-hero" id="welcomeHero">
-                    <div class="welcome-icon-box">
-                        <svg viewBox="0 0 24 24" fill="none" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83"/>
-                        </svg>
-                    </div>
-                    <h2 class="welcome-title">Welcome to AIF Assistant</h2>
-                    <p class="welcome-subtitle">Ask questions, search through your uploaded PDFs, analyze scanned images, and chat with RAG intelligence.</p>
-
-                    <div class="welcome-prompts">
-                        <div class="prompt-card" data-prompt="Summarize the key points of the uploaded documents.">
-                            <div class="prompt-card-icon">📄</div>
-                            <div>Summarize the key points of uploaded documents</div>
-                        </div>
-                        <div class="prompt-card" data-prompt="Extract the main findings, dates, and conclusions from the files.">
-                            <div class="prompt-card-icon">🔍</div>
-                            <div>Extract main findings, dates & conclusions</div>
-                        </div>
-                        <div class="prompt-card" data-prompt="What questions can I ask based on the indexed knowledge base?">
-                            <div class="prompt-card-icon">💡</div>
-                            <div>Suggest questions based on indexed docs</div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <footer class="composer">
-                <div class="composer-card">
-                    <form id="chatForm" class="composer-inner" autocomplete="off">
-                        <textarea id="prompt"
-                                  class="prompt"
-                                  placeholder="Ask questions about your uploaded documents or chat…"
-                                  rows="1"></textarea>
-                        <button type="submit" class="send" id="sendBtn" data-mode="send">
-                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-                                <line x1="22" y1="2" x2="11" y2="13"></line>
-                                <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                            </svg>
-                            <span>Send</span>
-                        </button>
-                    </form>
-                </div>
-                <div class="composer-hint">
-                    <span>Press <span class="kbd-badge">Enter</span> to send</span>
-                    <span>•</span>
-                    <span><span class="kbd-badge">Shift + Enter</span> for new line</span>
-                </div>
-            </footer>
-        </main>
+<div class="scrim" id="scrim"></div>
+<div class="app">
+  <aside class="rail" id="rail" aria-label="Conversations">
+    <div class="brand"><div class="mark"><svg class="i"><use href="#i-spark"/></svg></div>AIF</div>
+    <button class="newchat" id="newBtn" type="button"><svg class="i"><use href="#i-plus"/></svg>New chat</button>
+    <div class="cap">Recent</div>
+    <nav class="chats" id="chatList"></nav>
+    <div class="foot">
+      <button class="nav" id="libBtn" type="button"><svg class="i"><use href="#i-lib"/></svg>Library<span class="badge" id="count">0</span></button>
+      <button class="nav" id="setBtn" type="button"><svg class="i"><use href="#i-gear"/></svg>Model settings</button>
     </div>
+  </aside>
 
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
-    <script src="{% static 'chat/chat.js' %}" defer></script>
+  <main>
+    <header class="bar">
+      <button class="burger" id="burger" type="button" aria-label="Open menu"><svg class="i"><use href="#i-menu"/></svg></button>
+      <div id="title">New chat</div>
+      <div class="pill" id="pill"><i></i><span>No model</span></div>
+    </header>
 
-    <!-- Settings Modal -->
-    <div class="modal-backdrop" id="settingsModal" hidden>
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <circle cx="12" cy="12" r="3"></circle>
-                        <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path>
-                    </svg>
-                    <span>LLM & Provider Settings</span>
-                </div>
-                <button class="modal-close" id="settingsCloseBtn" type="button" aria-label="Close">✕</button>
-            </div>
+    <section class="feed" id="feed" aria-live="polite"><div class="col" id="col"></div></section>
 
-            <div class="modal-body">
-                <label class="field">
-                    <div class="label">Provider</div>
-                    <select id="providerSelect">
-                        <option value="google">Google (Gemini)</option>
-                        <option value="openai">OpenAI</option>
-                        <option value="ollama">Ollama (Local)</option>
-                    </select>
-                </label>
+    <form class="composer" id="form" autocomplete="off">
+      <div class="box">
+        <textarea id="ta" rows="1" placeholder="Ask anything about your documents…" aria-label="Message"></textarea>
+        <button class="send" id="sendBtn" type="submit" aria-label="Send"><svg class="i"><use href="#i-send"/></svg></button>
+      </div>
+      <div class="tip"><kbd>Enter</kbd> to send, <kbd>Shift</kbd> + <kbd>Enter</kbd> for a new line</div>
+    </form>
+  </main>
+</div>
 
-                <div class="field" id="apiKeyField">
-                    <div class="label">
-                        <span>API Key</span>
-                        <button class="btn secondary" id="clearKeyBtn" type="button" style="padding:2px 8px; font-size:11px;">Clear Key</button>
-                    </div>
-                    <input id="apiKeyInput" type="password" placeholder="Paste your API key…" />
-                    <div class="field-help">Keys are securely encrypted at rest before storing.</div>
-                </div>
-
-                <div class="field" id="baseUrlField" hidden>
-                    <div class="label">Base URL</div>
-                    <input id="baseUrlInput" type="text" placeholder="http://localhost:11434" />
-                    <div class="field-help">Point to your local or remote Ollama endpoint.</div>
-                </div>
-
-                <label class="field">
-                    <div class="label">Model</div>
-                    <input id="modelInput" type="text" placeholder="e.g. gemini-1.5-flash / gpt-4o-mini / llama3.1" />
-                </label>
-
-                <label class="field">
-                    <div class="label">Temperature</div>
-                    <input id="tempInput" type="number" min="0" max="2" step="0.1" />
-                    <div class="field-help">0.0 for strict & factual, higher for creative responses.</div>
-                </label>
-
-                <div class="row" style="margin-top: 8px;">
-                    <button class="btn" id="saveSettingsBtn" type="button">Save Settings</button>
-                    <div class="muted" id="settingsStatus"></div>
-                </div>
-            </div>
-        </div>
+<template id="tplEmpty">
+  <div class="empty">
+    <h1>Ask your documents anything.</h1>
+    <p>Add PDFs, scans and notes to your library, then get precise answers with the pages they came from.</p>
+    <div class="sug">
+      <button type="button" data-p="Summarize the key points of my documents."><svg class="i"><use href="#i-file"/></svg>Summarize my documents</button>
+      <button type="button" data-p="Extract the main findings, dates and conclusions from the files."><svg class="i"><use href="#i-find"/></svg>Pull out key findings and dates</button>
+      <button type="button" data-p="What questions can I ask based on the indexed documents?"><svg class="i"><use href="#i-q"/></svg>Suggest what to ask next</button>
     </div>
+    <div class="hint" id="emptyHint" hidden>Your library is empty. Add a document to get grounded answers.<button type="button" id="hintBtn">Add documents</button></div>
+  </div>
+</template>
 
-    <!-- Upload Modal -->
-    <div class="modal-backdrop" id="uploadModal" hidden>
-        <div class="modal">
-            <div class="modal-header">
-                <div class="modal-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-                        <polyline points="17 8 12 3 7 8"></polyline>
-                        <line x1="12" y1="3" x2="12" y2="15"></line>
-                    </svg>
-                    <span>Upload & Index Documents</span>
-                </div>
-                <button class="modal-close" id="uploadCloseBtn" type="button" aria-label="Close">✕</button>
-            </div>
-            <div class="modal-body">
-                <div class="upload-dropzone" id="uploadDropzone" onclick="document.getElementById('uploadInput').click()">
-                    <div class="dropzone-icon">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                            <polyline points="14 2 14 8 20 8"></polyline>
-                            <line x1="12" y1="18" x2="12" y2="12"></line>
-                            <line x1="9" y1="15" x2="15" y2="15"></line>
-                        </svg>
-                    </div>
-                    <div class="dropzone-text">Click to choose or drag & drop files here</div>
-                    <div class="dropzone-subtext">Supports PDF (with full OCR & scanned page support), TXT, and Markdown (up to 50MB)</div>
-                    <input id="uploadInput" type="file" multiple accept=".pdf,.txt,.md" style="display:none;" />
-                </div>
+<!-- Settings -->
+<dialog id="settings">
+  <div class="dh"><h2>Model settings</h2><button class="x" type="button" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button></div>
+  <div class="db">
+    <div class="f"><label for="prov">Provider</label>
+      <select id="prov" class="f" style="height:44px;padding:0 13px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--ink)">
+        <option value="google">Google (Gemini)</option><option value="openai">OpenAI</option><option value="ollama">Ollama (local)</option>
+      </select></div>
+    <div class="f" id="keyF"><div class="lab"><label for="key">API key</label><button class="link" id="clearKey" type="button">Remove saved key</button></div>
+      <input id="key" type="password" placeholder="Paste your API key" autocomplete="off"><div class="help" id="keyHelp">Your key is encrypted before it is stored.</div></div>
+    <div class="f" id="urlF" hidden><label for="url">Base URL</label><input id="url" type="text" placeholder="http://localhost:11434"><div class="help">Where your Ollama server is running.</div></div>
+    <div class="f"><label for="model">Model</label><input id="model" type="text" placeholder="gemini-2.5-flash"></div>
+    <div class="f"><div class="lab"><label for="temp">Temperature</label><span id="tempV" style="font:12px var(--mono);color:var(--ink2)">0.2</span></div>
+      <input id="temp" type="range" min="0" max="1" step="0.1" value="0.2"><div class="help">Lower is stricter and more factual. Higher is more creative.</div></div>
+    <div class="row"><button class="btn" id="saveSet" type="button">Save changes</button><div class="msgline" id="setMsg"></div></div>
+  </div>
+</dialog>
 
-                <div id="selectedFilesSummary" class="muted" style="min-height: 18px;"></div>
-
-                <div class="row" style="margin-top: 4px;">
-                    <button class="btn" id="uploadGoBtn" type="button">Upload & Ingest</button>
-                    <div class="muted" id="uploadStatus"></div>
-                </div>
-            </div>
-        </div>
+<!-- Library -->
+<dialog id="library">
+  <div class="dh"><h2>Library</h2><button class="x" type="button" data-close aria-label="Close"><svg class="i"><use href="#i-x"/></svg></button></div>
+  <div class="db">
+    <div class="drop" id="drop" tabindex="0" role="button" aria-label="Choose files to upload">
+      <svg class="i"><use href="#i-up"/></svg><b>Drop files here, or browse</b>
+      <span>PDF (including scanned pages), TXT and Markdown, up to 50 MB each</span>
+      <input id="fileIn" type="file" multiple accept=".pdf,.txt,.md" hidden>
     </div>
+    <div class="msgline" id="upMsg"></div>
+    <div class="files" id="files"></div>
+    <div class="row" style="justify-content:space-between"><span class="msgline" id="libMsg"></span><button class="btn warn" id="clearAll" type="button">Remove all</button></div>
+  </div>
+</dialog>
 
-    <!-- Knowledge Base Modal -->
-    <div class="modal-backdrop" id="knowledgeModal" hidden>
-        <div class="modal" style="width: min(640px, 100%);">
-            <div class="modal-header">
-                <div class="modal-title">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path>
-                        <path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path>
-                    </svg>
-                    <span>Indexed Knowledge Base</span>
-                </div>
-                <button class="modal-close" id="knowledgeCloseBtn" type="button" aria-label="Close">✕</button>
-            </div>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+<script>
+(()=>{
+const $=s=>document.querySelector(s), esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ic=n=>`<svg class="i"><use href="#i-${n}"/></svg>`;
+const csrf=()=>(document.cookie.split('; ').find(c=>c.startsWith('csrftoken='))||'').split('=')[1]||(document.querySelector('[name=csrfmiddlewaretoken]')||{}).value||'';
+const md=t=>{try{return DOMPurify.sanitize(marked.parse(t||'',{breaks:true}))}catch(e){return '<p>'+esc(t)+'</p>'}};
 
-            <div class="modal-body">
-                <div class="row" style="justify-content:space-between;">
-                    <div class="muted" id="knowledgeStatus">Loading files...</div>
-                    <button class="btn danger" id="clearKnowledgeBtn" type="button" style="padding:6px 12px; font-size:12px;">Clear All Documents</button>
-                </div>
+async function api(url,{method='GET',body,form}={}){
+  const h={'X-CSRFToken':csrf()};let b;
+  if(form)b=form;else if(body!==undefined){h['Content-Type']='application/json';b=JSON.stringify(body)}
+  const r=await fetch(url,{method,headers:h,body:b,credentials:'same-origin'});
+  let d={};try{d=await r.json()}catch(e){}
+  if(!r.ok||d.error)throw new Error(d.error||'Request failed ('+r.status+')');
+  return d;
+}
 
-                <div id="knowledgeList" class="sources-list" style="max-height: 380px; overflow-y: auto;"></div>
-            </div>
-        </div>
-    </div>
+const col=$('#col'),feed=$('#feed'),ta=$('#ta'),sendBtn=$('#sendBtn');
+let chatId=null,hist=[],busy=false,ctrl=null,fileCount=0,chats=[];
+const scroll=()=>{feed.scrollTop=feed.scrollHeight};
+
+/* ---------- Chats ---------- */
+function setTitle(t){$('#title').textContent=t||'New chat';document.title=(t&&t!=='New chat'?t+' · ':'')+'AIF'}
+function renderChats(){
+  const l=$('#chatList');
+  if(!chats.length){l.innerHTML='<div class="none">No conversations yet</div>';return}
+  l.innerHTML=chats.map(c=>`<div class="chat${c.id===chatId?' on':''}" data-id="${c.id}"><button class="ct" type="button">${esc(c.title||'Untitled')}</button><div class="acts"><button class="ren" type="button" aria-label="Rename">${ic('pen')}</button><button class="del" type="button" aria-label="Delete">${ic('trash')}</button></div></div>`).join('');
+}
+async function refreshChats(){
+  try{chats=(await api('/api/chats/')).chats||[];renderChats();const c=chats.find(x=>x.id===chatId);if(c)setTitle(c.title)}catch(e){}
+}
+function showEmpty(){
+  col.innerHTML='';col.append($('#tplEmpty').content.cloneNode(true));
+  col.querySelectorAll('.sug button').forEach(b=>b.onclick=()=>send(b.dataset.p));
+  const h=$('#emptyHint');if(h){h.hidden=fileCount>0;$('#hintBtn').onclick=openLib}
+}
+function newChat(){
+  if(busy&&ctrl)ctrl.abort();
+  chatId=null;hist=[];setTitle('New chat');showEmpty();renderChats();closeRail();ta.focus();
+}
+async function openChat(id){
+  if(busy&&ctrl)ctrl.abort();
+  try{
+    const d=await api('/api/chats/'+id+'/messages/');
+    chatId=id;hist=[];col.innerHTML='';setTitle(d.chat.title);
+    (d.messages||[]).forEach(m=>{
+      hist.push({role:m.role,content:m.content});
+      const x=addMsg(m.role,m.content);
+      if(m.is_partial&&x.w)x.w.querySelector('.bw').insertAdjacentHTML('beforeend','<div class="note">This reply was cut off.</div>');
+    });
+    if(!hist.length)showEmpty();
+    renderChats();closeRail();scroll();
+  }catch(e){col.innerHTML='<div class="err">'+esc(e.message)+'</div>'}
+}
+$('#chatList').addEventListener('click',async e=>{
+  const row=e.target.closest('.chat');if(!row)return;const id=+row.dataset.id;
+  if(e.target.closest('.ren')){
+    const cur=(chats.find(c=>c.id===id)||{}).title||'';const t=prompt('Rename conversation',cur);
+    if(t&&t.trim()){try{await api('/api/chats/'+id+'/rename/',{method:'POST',body:{title:t.trim()}});await refreshChats()}catch(x){alert(x.message)}}
+  }else if(e.target.closest('.del')){
+    if(!confirm('Delete this conversation and its messages?'))return;
+    try{await api('/api/chats/'+id+'/delete/',{method:'POST',body:{}});if(id===chatId)newChat();await refreshChats()}catch(x){alert(x.message)}
+  }else openChat(id);
+});
+
+/* ---------- Messages ---------- */
+function addMsg(role,text,typing){
+  const w=document.createElement('div');
+  if(role==='user'){w.className='msg u';w.innerHTML='<div class="b"></div>';w.firstChild.textContent=text;col.append(w);scroll();return{w}}
+  w.className='msg ai';
+  w.innerHTML='<div class="av">'+ic('spark')+'</div><div class="bw"><div class="b md"></div><div class="src"></div></div>';
+  const b=w.querySelector('.b');b.innerHTML=typing?'<span class="dots"><i></i><i></i><i></i></span>':md(text);
+  col.append(w);scroll();return{w,b,s:w.querySelector('.src')};
+}
+function setSources(el,list){
+  const seen=new Set(),out=[];
+  (list||[]).forEach(s=>{const k=s.source+'|'+s.page;if(!seen.has(k)){seen.add(k);out.push(s)}});
+  el.innerHTML=out.map(s=>`<span class="chip">${ic('file')}${esc(s.source||'Source')}${s.page!=null&&s.page!==''?'<b>p.'+esc(s.page)+'</b>':''}</span>`).join('');
+}
+
+/* ---------- Streaming ---------- */
+function setBusy(v){
+  busy=v;sendBtn.classList.toggle('stop',v);sendBtn.setAttribute('aria-label',v?'Stop':'Send');
+  sendBtn.innerHTML=ic(v?'stop':'send');
+}
+async function send(text){
+  text=(text||'').trim();if(busy||!text)return;
+  if(!hist.length&&col.querySelector('.empty'))col.innerHTML='';
+  const past=hist.slice(-10);
+  addMsg('user',text);const ai=addMsg('ai','',true);
+  ta.value='';ta.style.height='auto';setBusy(true);ctrl=new AbortController();
+  let acc='',raf=0,ok=false;
+  const paint=()=>{raf=0;ai.b.innerHTML=md(acc);scroll()};
+  const handle=raw=>{
+    let ev='message',data=[];
+    raw.split('\n').forEach(l=>{if(l.startsWith('event:'))ev=l.slice(6).trim();else if(l.startsWith('data:'))data.push(l.slice(5).trimStart())});
+    if(!data.length)return;let d;try{d=JSON.parse(data.join('\n'))}catch(e){return}
+    if(ev==='start'&&d.chat_id)chatId=d.chat_id;
+    else if(ev==='sources')setSources(ai.s,d.sources);
+    else if(ev==='token'){acc+=d.token||'';if(!raf)raf=requestAnimationFrame(paint)}
+    else if(ev==='done'){ok=true;if(d.chat_id)chatId=d.chat_id}
+    else if(ev==='error')throw new Error(d.error||'Something went wrong.');
+  };
+  try{
+    const r=await fetch('/api/chat/stream/',{method:'POST',signal:ctrl.signal,credentials:'same-origin',headers:{'Content-Type':'application/json','X-CSRFToken':csrf()},body:JSON.stringify({chat_id:chatId,message:text,history:past})});
+    if(!r.ok||!r.body){let m='Request failed ('+r.status+')';try{m=(await r.json()).error||m}catch(e){}throw new Error(m)}
+    const rd=r.body.getReader(),dec=new TextDecoder();let buf='';
+    for(;;){
+      const{value,done}=await rd.read();if(done)break;
+      buf+=dec.decode(value,{stream:true}).replace(/\r\n/g,'\n');
+      let i;while((i=buf.indexOf('\n\n'))>=0){const c=buf.slice(0,i);buf=buf.slice(i+2);handle(c)}
+    }
+    if(buf.trim())handle(buf);
+  }catch(e){
+    if(e.name!=='AbortError'){ai.b.className='b err';ai.b.textContent=e.message}
+  }finally{
+    if(raf)cancelAnimationFrame(raf);
+    if(acc){ai.b.innerHTML=md(acc);hist.push({role:'user',content:text},{role:'assistant',content:acc})}
+    else if(ai.b.querySelector('.dots'))ai.b.innerHTML='<span class="note">Stopped.</span>';
+    setBusy(false);ctrl=null;scroll();refreshChats();
+  }
+}
+$('#form').addEventListener('submit',e=>{e.preventDefault();if(busy&&ctrl)ctrl.abort();else send(ta.value)});
+ta.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey&&!e.isComposing){e.preventDefault();if(!busy)send(ta.value)}});
+ta.addEventListener('input',()=>{ta.style.height='auto';ta.style.height=Math.min(ta.scrollHeight,200)+'px'});
+
+/* ---------- Settings ---------- */
+const S={dlg:$('#settings'),prov:$('#prov'),key:$('#key'),url:$('#url'),model:$('#model'),temp:$('#temp')};
+const ph={google:'gemini-2.5-flash',openai:'gpt-4o-mini',ollama:'llama3.1'};
+let hasKey=false;
+function provUI(){
+  const p=S.prov.value;$('#keyF').hidden=p==='ollama';$('#urlF').hidden=p!=='ollama';S.model.placeholder=ph[p]||'';
+  $('#keyHelp').textContent=hasKey?'A key is saved. Paste a new one to replace it.':'Your key is encrypted before it is stored.';
+}
+function pill(d){const p=$('#pill');p.classList.toggle('ok',!!(d&&d.model&&(d.has_api_key||d.provider==='ollama')));p.querySelector('span').textContent=d&&d.model?d.model:'No model'}
+async function loadSettings(open){
+  try{
+    const d=await api('/api/settings/');hasKey=!!d.has_api_key;pill(d);
+    S.prov.value=d.provider||'google';S.model.value=d.model||'';S.temp.value=d.temperature??0.2;$('#tempV').textContent=(+S.temp.value).toFixed(1);S.url.value=d.base_url||'';S.key.value='';
+    provUI();
+  }catch(e){if(open)$('#setMsg').textContent=e.message}
+}
+async function saveSettings(clear){
+  const m=$('#setMsg');m.className='msgline';m.textContent='Saving…';
+  const body={provider:S.prov.value,model:S.model.value.trim(),temperature:parseFloat(S.temp.value),clear_api_key:!!clear};
+  if(S.prov.value==='ollama')body.base_url=S.url.value.trim();
+  if(S.key.value.trim()&&!clear)body.api_key=S.key.value.trim();
+  try{const r=await api('/api/settings/',{method:'POST',body});m.className='msgline good';m.textContent='Saved';await loadSettings();setTimeout(()=>{if(m.textContent==='Saved')m.textContent=''},2200)}
+  catch(e){m.className='msgline bad';m.textContent=e.message}
+}
+$('#setBtn').onclick=()=>{$('#setMsg').textContent='';S.dlg.showModal();loadSettings(true);closeRail()};
+S.prov.onchange=provUI;S.temp.oninput=()=>$('#tempV').textContent=(+S.temp.value).toFixed(1);
+$('#saveSet').onclick=()=>saveSettings(false);
+$('#clearKey').onclick=()=>{if(confirm('Remove the saved API key?'))saveSettings(true)};
+
+/* ---------- Library ---------- */
+const L=$('#library'),drop=$('#drop'),fileIn=$('#fileIn');
+function setCount(n){fileCount=n;$('#count').textContent=n;const h=$('#emptyHint');if(h)h.hidden=n>0}
+async function loadFiles(){
+  try{
+    const f=(await api('/api/rag/files/')).files||[];setCount(f.length);
+    $('#files').innerHTML=f.length?f.map(x=>`<div class="file" data-id="${x.id}">${ic('file')}<div class="n"><b>${esc(x.name)}</b><span>${esc(x.size_human||'')}${x.created_at?', added '+new Date(x.created_at).toLocaleDateString(undefined,{day:'numeric',month:'short'}):''}</span></div><button type="button" aria-label="Remove ${esc(x.name)}">${ic('trash')}</button></div>`).join(''):'<div class="none">No documents yet. Add a PDF, TXT or Markdown file.</div>';
+    $('#clearAll').hidden=!f.length;
+  }catch(e){$('#libMsg').textContent=e.message}
+}
+function openLib(){$('#upMsg').textContent='';$('#libMsg').textContent='';L.showModal();loadFiles();closeRail()}
+async function upload(list){
+  if(!list.length)return;const m=$('#upMsg');m.className='msgline';m.textContent='Uploading and indexing '+list.length+(list.length>1?' files':' file')+'…';
+  const fd=new FormData();[...list].forEach(f=>fd.append('files',f));
+  try{
+    const d=await api('/api/rag/upload/',{method:'POST',form:fd});
+    const chunks=(d.files||[]).reduce((a,f)=>a+(f.chunks||0),0);
+    m.className='msgline good';m.textContent='Indexed '+(d.files||[]).length+(((d.files||[]).length===1)?' file':' files')+' ('+chunks+' chunks)';
+    await loadFiles();
+  }catch(e){m.className='msgline bad';m.textContent=e.message}
+  fileIn.value='';
+}
+$('#libBtn').onclick=openLib;
+drop.onclick=()=>fileIn.click();
+drop.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();fileIn.click()}};
+fileIn.onchange=()=>upload(fileIn.files);
+['dragenter','dragover'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.add('over')}));
+['dragleave','drop'].forEach(t=>drop.addEventListener(t,e=>{e.preventDefault();drop.classList.remove('over')}));
+drop.addEventListener('drop',e=>upload(e.dataTransfer.files));
+$('#files').addEventListener('click',async e=>{
+  const b=e.target.closest('button');if(!b)return;const row=b.closest('.file');
+  if(!confirm('Remove this document from the library?'))return;
+  try{await api('/api/rag/files/delete/',{method:'POST',form:new URLSearchParams({id:row.dataset.id})});await loadFiles()}catch(x){$('#libMsg').textContent=x.message}
+});
+$('#clearAll').onclick=async()=>{
+  if(!confirm('Remove every document from the library? This cannot be undone.'))return;
+  try{await api('/api/rag/clear/',{method:'POST',body:{}});await loadFiles()}catch(x){$('#libMsg').textContent=x.message}
+};
+
+/* ---------- Shell ---------- */
+const rail=$('#rail'),scrim=$('#scrim');
+const closeRail=()=>{rail.classList.remove('open');scrim.classList.remove('show')};
+$('#burger').onclick=()=>{rail.classList.add('open');scrim.classList.add('show')};
+scrim.onclick=closeRail;$('#newBtn').onclick=newChat;
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>b.closest('dialog').close());
+document.querySelectorAll('dialog').forEach(d=>d.addEventListener('click',e=>{if(e.target===d)d.close()}));
+
+showEmpty();setBusy(false);refreshChats();loadFiles();loadSettings();
+})();
+</script>
 </body>
 </html>
