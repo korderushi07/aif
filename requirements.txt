@@ -1,0 +1,32 @@
+# Django core
+Django>=4.2
+
+# LangChain core
+langchain
+langchain-core
+langchain-community
+
+# Providers
+langchain-openai
+langchain-google-genai
+langchain-ollama
+openai
+
+# Vector DB
+chromadb
+langchain-chroma
+
+# File ingestion
+PyPDF2
+python-docx1
+
+# Embeddings / crypto
+cryptography
+
+# Utilities
+python-dotenv
+pydantic
+whitenoise
+
+# Server
+gunicorn

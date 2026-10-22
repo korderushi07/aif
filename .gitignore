@@ -1,0 +1,91 @@
+########################################
+# Python / Django
+########################################
+
+__pycache__/
+migrations/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+*.egg-info/
+.eggs/
+.env
+.envrc
+
+########################################
+# Virtual environments
+########################################
+
+venv/
+env/
+rag-chatbot-env/
+.venv/
+
+########################################
+# Django runtime files
+########################################
+
+db.sqlite3
+db.sqlite3-journal
+*.log
+local_settings.py
+
+########################################
+# Media / user-uploaded files
+########################################
+
+media/
+uploads/
+
+########################################
+# Vector databases (Chroma)
+########################################
+
+chroma/
+chromadb/
+*.sqlite3-wal
+*.sqlite3-shm
+
+########################################
+# Node / frontend build (if added later)
+########################################
+
+node_modules/
+dist/
+build/
+
+########################################
+# OS / Editor junk
+########################################
+
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+*.swp
+*.swo
+.vs/
+
+########################################
+# Tests / coverage
+########################################
+
+.coverage
+htmlcov/
+.pytest_cache/
+
+########################################
+# Jupyter / experiments
+########################################
+
+.ipynb_checkpoints/
+notebooks/
+
+########################################
+# Temporary files
+########################################
+
+tmp/
+temp/
+.cache/

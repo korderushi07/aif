@@ -1,0 +1,17 @@
+.git/
+.vscode/
+.idea/
+
+**/__pycache__/
+**/*.pyc
+**/*.pyo
+**/*.log
+
+.env
+.env.*
+
+media/
+chroma/
+uploads/
+db.sqlite3
+sample_docs/
