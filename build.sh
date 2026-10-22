@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-# Render Build Script
-# This script is run by Render during deployment.
-
+# Render Build Script - runs once at deploy time
 set -o errexit
 
 echo "=== Installing Python dependencies ==="
@@ -12,12 +10,7 @@ echo "=== Collecting static files ==="
 cd source/djangoserver
 python manage.py collectstatic --noinput
 
-echo "=== Applying database migrations ==="
-python manage.py migrate --noinput
-
-if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then
-    echo "=== Setting up admin user ==="
-    python manage.py createsuperuser --noinput || true
-fi
+echo "=== Running migrations (build-time, best-effort) ==="
+python manage.py migrate --noinput || echo "WARNING: migrate failed at build time (DB may not exist yet -- start.sh will retry)"
 
 echo "=== Build complete ==="
