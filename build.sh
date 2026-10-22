@@ -13,7 +13,6 @@ cd source/djangoserver
 python manage.py collectstatic --noinput
 
 echo "=== Applying database migrations ==="
-python manage.py makemigrations --noinput
 python manage.py migrate --noinput
 
 if [ -n "$DJANGO_SUPERUSER_USERNAME" ] && [ -n "$DJANGO_SUPERUSER_PASSWORD" ]; then

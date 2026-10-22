@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: chmod +x build.sh && ./build.sh
-    startCommand: cd source/djangoserver && python manage.py migrate --noinput && gunicorn ragchatbot.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: cd source/djangoserver && python manage.py migrate --noinput && python manage.py shell -c "from django.contrib.auth import get_user_model; U=get_user_model(); U.objects.filter(is_superuser=True).exists() or U.objects.create_superuser('admin','admin@example.com','admin123')" && gunicorn ragchatbot.wsgi:application --bind 0.0.0.0:$PORT --timeout 120 --workers 1
     envVars:
       - key: DEBUG
         value: "0"
@@ -12,3 +12,5 @@ services:
         generateValue: true
       - key: PYTHON_VERSION
         value: "3.12.3"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: "aif-t8v1.onrender.com"
