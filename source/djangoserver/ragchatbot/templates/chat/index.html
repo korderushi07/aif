@@ -170,7 +170,11 @@ dialog::backdrop{background:rgba(8,12,20,.55);backdrop-filter:blur(5px)}
 <div class="scrim" id="scrim"></div>
 <div class="app">
   <aside class="rail" id="rail" aria-label="Conversations">
-    <div class="brand"><div class="mark"><svg class="i"><use href="#i-spark"/></svg></div>AIF</div>
+    <div class="brand">
+      <div class="mark"><svg class="i"><use href="#i-spark"/></svg></div>
+      <span>AIF</span>
+      <span class="badge" style="margin-left:auto;font-size:11.5px;font-weight:500;">Hello 👋</span>
+    </div>
     <button class="newchat" id="newBtn" type="button"><svg class="i"><use href="#i-plus"/></svg>New chat</button>
     <div class="cap">Recent</div>
     <nav class="chats" id="chatList"></nav>
@@ -200,9 +204,16 @@ dialog::backdrop{background:rgba(8,12,20,.55);backdrop-filter:blur(5px)}
 </div>
 
 <template id="tplEmpty">
-  <div class="empty">
-    <h1>Ask your documents anything.</h1>
-    <p>Add PDFs, scans and notes to your library, then get precise answers with the pages they came from.</p>
+  <div class="empty" style="padding-top:20px;">
+    <div class="msg ai" style="margin-bottom:20px;">
+      <div class="av"><svg class="i"><use href="#i-spark"/></svg></div>
+      <div class="bw">
+        <div class="b md" style="background:var(--panel);border:1px solid var(--line);border-radius:18px 18px 18px 6px;padding:14px 18px;box-shadow:var(--sh);max-width:580px;">
+          <p style="margin:0 0 6px;font-size:15px;font-weight:600;color:var(--ink);">Hello! 👋 Welcome to AIF.</p>
+          <p style="margin:0;color:var(--ink2);font-size:14px;line-height:1.5;">How can I help you today? Ask questions about your documents, summarize PDFs and notes, or choose one of the suggestions below.</p>
+        </div>
+      </div>
+    </div>
     <div class="sug">
       <button type="button" data-p="Summarize the key points of my documents."><svg class="i"><use href="#i-file"/></svg>Summarize my documents</button>
       <button type="button" data-p="Extract the main findings, dates and conclusions from the files."><svg class="i"><use href="#i-find"/></svg>Pull out key findings and dates</button>
