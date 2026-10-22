@@ -1,0 +1,150 @@
+﻿{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>RAG Chatbot</title>
+    <link rel="stylesheet" href="{% static 'chat/chat.css' %}">
+</head>
+<body>
+    <div class="app">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand">RAG Chatbot</div>
+                <button class="new-chat" id="newChatBtn" title="New chat">＋</button>
+                <button class="new-chat" id="uploadBtn" type="button" title="Upload">⬆</button>
+                <button class="new-chat" id="knowledgeBtn" type="button" title="Knowledge">📚</button>
+                <button class="new-chat" id="settingsBtn" title="Settings">⚙</button>
+
+            </div>
+
+            <div class="chat-list" id="chatList">
+                <div class="chat-item active">
+                    <div class="chat-title" id="activeChatTitle">New conversation</div>
+                </div>
+            </div>
+
+            <div class="sidebar-footer">
+                <div class="muted">{{ request.user.get_username }}</div>
+
+                <a href="{% url 'logout' %}"
+                   class="btn secondary"
+                   style="margin-top:8px; width:100%; text-align:center; text-decoration:none;">
+                    Logout
+                </a>
+            </div>
+        </aside>
+
+        <!-- Main chat -->
+        <main class="main">
+            <header class="topbar">
+                <div class="topbar-title" id="topbarTitle">New conversation</div>
+            </header>
+
+            <section class="messages" id="messages">
+                <div class="msg bot">
+                    <div class="bubble">
+                        Hi — I’m your RAG chatbot. Ask me anything.
+                    </div>
+                </div>
+            </section>
+
+            <footer class="composer">
+                <form id="chatForm" class="composer-inner" autocomplete="off">
+                    <textarea id="prompt"
+                              class="prompt"
+                              placeholder="Message RAG Chatbot…"
+                              rows="1"></textarea>
+                    <button type="submit" class="send" id="sendBtn" data-mode="send">Send</button>
+                </form>
+                <div class="composer-hint">Enter to send • Shift+Enter for newline</div>
+            </footer>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.8/dist/purify.min.js"></script>
+    <script src="{% static 'chat/chat.js' %}" defer></script>
+
+    <div class="modal-backdrop" id="settingsModal" hidden>
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Settings</div>
+                <button class="modal-close" id="settingsCloseBtn">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <label class="field">
+                    <div class="label">Provider</div>
+                    <select id="providerSelect">
+                        <option value="openai">OpenAI</option>
+                        <option value="google">Google (Gemini)</option>
+                        <option value="ollama">Ollama</option>
+                    </select>
+                </label>
+
+                <label class="field" id="apiKeyField">
+                    <div class="label">API Key</div>
+                    <input id="apiKeyInput" type="password" placeholder="Paste key…" />
+                    <button class="btn" id="clearKeyBtn" type="button">Clear API key</button>
+                </label>
+
+                <label class="field" id="baseUrlField" hidden>
+                    <div class="label">Base URL</div>
+                    <input id="baseUrlInput" type="text" placeholder="http://localhost:11434" />
+                </label>
+
+                <label class="field">
+                    <div class="label">Model</div>
+                    <input id="modelInput" type="text" placeholder="e.g. gpt-4o-mini / gemini-1.5-pro / llama3.1" />
+                </label>
+
+                <label class="field">
+                    <div class="label">Temperature</div>
+                    <input id="tempInput" type="number" min="0" max="2" step="0.1" />
+                </label>
+
+                <div class="row">
+                    <button class="btn" id="saveSettingsBtn">Save</button>
+                    <div class="muted" id="settingsStatus"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="uploadModal" hidden>
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Upload documents</div>
+                <button class="modal-close" id="uploadCloseBtn" type="button">✕</button>
+            </div>
+            <div class="modal-body">
+                <input id="uploadInput" type="file" multiple accept=".pdf,.txt,.md" />
+                <button class="btn" id="uploadGoBtn" type="button">Upload & Index</button>
+                <div class="muted" id="uploadStatus"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-backdrop" id="knowledgeModal" hidden>
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Knowledge</div>
+                <button class="modal-close" id="knowledgeCloseBtn" type="button">✕</button>
+            </div>
+
+            <div class="modal-body">
+                <div class="row" style="justify-content:space-between;">
+                    <div class="muted" id="knowledgeStatus"></div>
+                    <button class="btn" id="clearKnowledgeBtn" type="button">Clear all</button>
+                </div>
+
+                <div id="knowledgeList" class="sources-list"></div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

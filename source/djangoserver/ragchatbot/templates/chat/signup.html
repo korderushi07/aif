@@ -1,0 +1,57 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Sign up · RAG Chatbot</title>
+    <link rel="stylesheet" href="{% static 'chat/chat.css' %}">
+</head>
+<body>
+
+    <div class="modal-backdrop">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Create account</div>
+            </div>
+
+            <div class="modal-body">
+                <form method="post">
+                    {% csrf_token %}
+
+                    {% for field in form %}
+                    <div class="field">
+                        <div class="label">{{ field.label }}</div>
+                        {{ field }}
+                        {% if field.errors %}
+                        <div class="muted" style="color:#ff6b6b;">
+                            {{ field.errors|striptags }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    {% if form.non_field_errors %}
+                    <div class="muted" style="color:#ff6b6b;">
+                        {{ form.non_field_errors|striptags }}
+                    </div>
+                    {% endif %}
+
+                    <div class="row" style="margin-top: 12px;">
+                        <button class="btn" type="submit">Create account</button>
+                    </div>
+                </form>
+
+                <div class="muted" style="margin-top: 10px;">
+                    Already have an account?
+                    <a href="{% url 'login' %}" style="color:var(--accent);text-decoration:none;">
+                        Login
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        document.querySelector("input")?.focus();
+    </script>
+</body>
+</html>
