@@ -4,7 +4,7 @@ services:
     runtime: python
     plan: free
     buildCommand: chmod +x build.sh && ./build.sh
-    startCommand: cd source/djangoserver && gunicorn ragchatbot.wsgi:application --bind 0.0.0.0:$PORT
+    startCommand: cd source/djangoserver && python manage.py migrate --noinput && gunicorn ragchatbot.wsgi:application --bind 0.0.0.0:$PORT
     envVars:
       - key: DEBUG
         value: "0"
